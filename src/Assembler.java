@@ -1,10 +1,14 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
 import java.lang.Math;;
 
 public class Assembler {
-    static Scanner input = null;
+    private static Writer writer,writer2;
+    private static Scanner input = null;
+    private static boolean first = true;
 
     public static void main(String[]args)
     {
@@ -31,8 +35,6 @@ public class Assembler {
             }
             function(instructions);
 
-            System.out.println("uzunluğu :"+instructions.size());
-
 
         }
 
@@ -46,12 +48,82 @@ public class Assembler {
         {
             System.err.println("Error reading from file.");
             System.exit(1);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+    }
+
+    public static String binaryToHex(String s){
+        String temp;
+        String retValue;
+        retValue="";
+        int i=0;
+        int j=0;
+        while(j<=3) {
+            temp=s.substring(i,i+4);
+
+
+            if(temp.equals("0000")){
+                temp="0";
+
+            }
+            if (temp.equals("0001")) {
+                temp="1";
+            }
+            if (temp.equals("0010")) {
+                temp="2";
+            }
+            if (temp.equals("0011")) {
+                temp="3";
+            }
+            if (temp.equals("0100")) {
+                temp="4";
+            }
+            if (temp.equals("0101")) {
+                temp="5";
+            }
+            if (temp.equals("0110")) {
+                temp="6";
+            }
+            if (temp.equals("0111")) {
+                temp="7";
+            }
+            if (temp.equals("1000")) {
+                temp="8";
+            }
+            if (temp.equals("1001")) {
+                temp="9";
+            }
+            if (temp.equals("1010")) {
+                temp="A";
+            }
+            if (temp.equals("1011")) {
+                temp="B";
+            }
+            if (temp.equals("1100")) {
+                temp="C";
+            }
+            if (temp.equals("1101")) {
+                temp="D";
+            }
+            if (temp.equals("1110")) {
+                temp="E";
+            }
+            if (temp.equals("1111")) {
+                temp="F";
+            }
+            retValue=retValue+temp;
+            i=i+4;
+            j++;
+
+        }
+        return retValue;
+
 
 
 
     }
-
 
 
     public static String getopcode(String ins){
@@ -162,7 +234,7 @@ public class Assembler {
         return temp;
     }
 
-    public static void function(ArrayList<String> instructions){
+    public static void function(ArrayList<String> instructions) throws IOException {
         int index1,index2;
         index1=0;
         index2=0;
@@ -271,9 +343,37 @@ public class Assembler {
 
 
             }
+            wToOFile(binaryToHex(temp));
+            System.out.println(binaryToHex(temp));
 
         }
     }
+
+    private static void wToOFile(String bff) throws IOException{    //write output to file
+
+        try {
+            if(first){
+                writer = new BufferedWriter(new FileWriter("outputLbL.txt",false));     //write instructions line by line
+                writer2 = new BufferedWriter(new FileWriter("outputOL.txt",false));     //write instructions consecutive
+                writer.write("v2.0 raw\n");
+                writer2.write("v2.0 raw\n");
+                first = false;
+            }else{
+                writer = new BufferedWriter(new FileWriter("outputLbL.txt",true));
+                writer2 = new BufferedWriter(new FileWriter("outputOL.txt",true));
+            }
+            writer.write(bff+"\n");
+            writer2.write(bff+" ");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) try { writer.close(); } catch (IOException ignore) {}
+            if (writer2 != null) try { writer2.close(); } catch (IOException ignore) {}
+        }
+
+    }
+
 }
 
 
