@@ -3,7 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 import java.lang.Math;;
 
-public class Main {
+public class Assembler {
     static Scanner input = null;
 
     public static void main(String[]args)
