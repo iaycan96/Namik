@@ -3,7 +3,7 @@ import java.util.*;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Assembler {
+public class assembler {
     private static Writer writer, writer2;
     private static Scanner input = null;
     private static boolean first = true;
@@ -152,7 +152,7 @@ public class Assembler {
         String temp = s;
         int val = Integer.parseInt(temp);
         temp = Integer.toBinaryString(val);
-        while ((temp.length() < 7)) {
+        while ((temp.length() < 8)) {
             temp = "0" + temp;
         }
         return temp;
@@ -176,7 +176,7 @@ public class Assembler {
         int index = s.indexOf(' ');
         addr = s.substring(index + 2);
         addr = addrToBinary(addr);
-        return opcode + "00000" + addr;
+        return opcode + "0000" + addr;
 
     }
 
@@ -275,7 +275,7 @@ public class Assembler {
                 addr = temp.substring(index2 + 1);
                 r1 = regToBinary(r1);
                 addr = addrToBinary(addr);
-                temp = opcode + r1 + "0" + addr;
+                temp = opcode + r1  + addr;
                 System.out.println(instruction + ":" + temp);
             }
             if (opcode.equals("0101")) {
@@ -284,7 +284,7 @@ public class Assembler {
                 addr = temp.substring(index2 + 1);
                 r1 = regToBinary(r1);
                 addr = addrToBinary(addr);
-                temp = opcode + r1 + "0" + addr;
+                temp = opcode + r1 + addr;
                 System.out.println(instruction + ":" + temp + "");
             }
             if (opcode.equals("0110")) { //CMP
