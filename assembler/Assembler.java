@@ -3,7 +3,7 @@ import java.util.*;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class assembler {
+public class Assembler {
     private static Writer writer, writer2;
     private static Scanner input = null;
     private static boolean first = true;
@@ -152,9 +152,28 @@ public class assembler {
         String temp = s;
         int val = Integer.parseInt(temp);
         temp = Integer.toBinaryString(val);
+       // System.out.println(temp);
         while ((temp.length() < 8)) {
             temp = "0" + temp;
         }
+        return temp;
+    }
+
+    private static String pcAddrToBinary(String s){
+        String temp =s;
+        int val =Integer.parseInt(temp);
+        temp=Integer.toBinaryString(val);
+        if(val>=0){
+            while(temp.length()<12){
+                temp=0+temp;
+            }
+
+        }
+        else{
+            temp = temp.substring(temp.length() - 12);
+
+        }
+
         return temp;
     }
 
@@ -174,9 +193,9 @@ public class assembler {
     private static String conditionalJump(String opcode, String s) {
         String addr;
         int index = s.indexOf(' ');
-        addr = s.substring(index + 2);
-        addr = addrToBinary(addr);
-        return opcode + "0000" + addr;
+        addr = s.substring(index + 1);
+        addr = pcAddrToBinary(addr);
+        return opcode  + addr;
 
     }
 
@@ -228,7 +247,7 @@ public class assembler {
                 r2 = regToBinary(r2);
                 r3 = regToBinary(r3);
                 temp = opcode + r1 + r2 + r3;
-                System.out.println(instruction + " :" + temp);
+
             }
             if (opcode.equals("0001")) {
                 index2 = temp.indexOf(',');
@@ -241,7 +260,7 @@ public class assembler {
                 r2 = regToBinary(r2);
                 imm = immToBinary(imm);
                 temp = opcode + r1 + r2 + imm;
-                System.out.println(instruction + " :" + temp);
+
             }
             if (opcode.equals("0010")) {
                 index2 = temp.indexOf(',');
@@ -254,7 +273,7 @@ public class assembler {
                 r2 = regToBinary(r2);
                 r3 = regToBinary(r3);
                 temp = opcode + r1 + r2 + r3;
-                System.out.println(instruction + ":" + temp);
+
             }
             if (opcode.equals("0011")) {
                 index2 = temp.indexOf(',');
@@ -267,7 +286,7 @@ public class assembler {
                 r2 = regToBinary(r2);
                 imm = immToBinary(imm);
                 temp = opcode + r1 + r2 + imm;
-                System.out.println(instruction + ":" + temp);
+
             }
             if (opcode.equals("0100")) {
                 index2 = temp.indexOf(',');
@@ -276,7 +295,7 @@ public class assembler {
                 r1 = regToBinary(r1);
                 addr = addrToBinary(addr);
                 temp = opcode + r1  + addr;
-                System.out.println(instruction + ":" + temp);
+
             }
             if (opcode.equals("0101")) {
                 index2 = temp.indexOf(',');
@@ -285,7 +304,7 @@ public class assembler {
                 r1 = regToBinary(r1);
                 addr = addrToBinary(addr);
                 temp = opcode + r1 + addr;
-                System.out.println(instruction + ":" + temp + "");
+
             }
             if (opcode.equals("0110")) { //CMP
                 index2 = temp.indexOf(',');
@@ -294,20 +313,21 @@ public class assembler {
                 op1 = regToBinary(op1);
                 op2 = regToBinary(op2);
                 temp = opcode + "0000" + op1 + op2;
-                System.out.println(instruction + ":" + temp);
+
             }
             if (opcode.equals("0111")) {//JUMP
                 offset = temp.substring(index1 + 1);
                 offset = toOffset(offset);
                 temp = opcode + "0000" + offset;
-                System.out.println(instruction + ":" + temp);
+
             }
             if (opcode.equals("1000") || opcode.equals("1001") || opcode.equals("1010") || opcode.equals("1011") || opcode.equals("1100")) {
                 temp = conditionalJump(opcode, temp);
-                System.out.println(instruction + ":" + temp);
+
             }
+           // System.out.println(instruction+"    "+temp);
             wToOFile(binaryToHex(temp));
-            System.out.println(binaryToHex(temp));
+
         }
     }
 
