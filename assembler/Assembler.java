@@ -193,7 +193,7 @@ public class Assembler {
     private static String conditionalJump(String opcode, String s) {
         String addr;
         int index = s.indexOf(' ');
-        addr = s.substring(index + 2);
+        addr = s.substring(index + 1);
         addr = pcAddrToBinary(addr);
         return opcode  + addr;
 
