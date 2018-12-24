@@ -2,14 +2,14 @@
 
 module cpu ();
 
-reg [11:0] PC, dataMemAdress;
+reg [11:0] PC, dataMemAddress;
 reg clock, ZF, CF, PC_flag;
-reg [15:0] instruction_memory[0:12'hFFF], data_memory[0:12'hFFF];
+reg [15:0] instruction_memory[0:12'hFFF];
 reg [15:0] instruction, write_value, alu_in;
 reg [3:0] opcode, read_register1, read_register2, write_register;
 wire dataMemRead, dataMemWrite, regWrite, immediate, ALUand, ALUadd, comparator, PCselect; //signals
 wire zf, cf, jumpOK;
-wire [15:0] reg_out1, reg_out2, alu_out;
+wire [15:0] reg_out1, reg_out2, alu_out, data_memory_out;
 integer i;
 
 initial begin
@@ -18,10 +18,6 @@ initial begin
   ZF <= 0;
   CF <= 0;
   PC_flag <= 0;
-
-  for (i = 0; i<12'hFFF+1; i=i+1) begin
-    data_memory[i] <= 16'h0000;
-  end
 
   $readmemh("v_output.hex", instruction_memory); //read from file
 end
@@ -34,11 +30,10 @@ always @(*) begin
 
   read_register1 = instruction[7:4];
   write_register = instruction[11:8];
-  dataMemAdress = {4'h0, instruction[7:0]};
+  dataMemAddress = {4'h0, instruction[7:0]};
 
   if(dataMemWrite) begin
     read_register2 = instruction[11:8];
-    data_memory[dataMemAdress] = reg_out2;
   end else begin
     read_register2 = instruction[3:0];
   end
@@ -49,10 +44,10 @@ always @(*) begin
     alu_in = reg_out2;
   end
 
-  if((ALUadd | ALUand) & ~dataMemWrite) begin
+  if(ALUadd | ALUand) begin
     write_value = alu_out;
-  end else begin
-    write_value = data_memory[dataMemAdress];
+  end else if(dataMemRead)begin
+    write_value = data_memory_out;
   end
 
   if(comparator) begin
@@ -69,17 +64,17 @@ end
 
 always @(posedge clock) begin
 
+  instruction = instruction_memory[PC];
+  opcode = instruction[15:12];
+  
   if(PC_flag) begin
     PC = PC + instruction[11:0];
   end else begin
     PC = PC + 1;
   end
-
-  instruction = instruction_memory[PC];
-  opcode = instruction[15:12];
-  
 end
 
+data_memory ins_data_memory(.dataMemRead(dataMemRead), .dataMemWrite(dataMemWrite), .value(reg_out2), .address(dataMemAddress), .out(data_memory_out));
 jump_unit ins_jump_unit(.opcode(opcode), .ZF(ZF), .CF(CF), .jumpOK(jumpOK));
 alu ins_alu(.a(reg_out1), .b(alu_in), .ALUand(ALUand), .ALUadd(ALUadd), .out(alu_out));
 flag_unit ins_flag_unit(.a(reg_out1), .b(reg_out2), .ZF(zf), .CF(cf));

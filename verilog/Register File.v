@@ -12,8 +12,7 @@ integer i;
 
 initial begin
   for(i=0;i<16;i=i+1)
-    register[i] <= i;
-
+    register[i] <= 16'h0000;
 end
 
 always @(*) begin
