@@ -48,53 +48,37 @@ public class Assembler {
             temp = s.substring(i, i + 4);
 
             if (temp.equals("0000")) {
-                temp = "0";
-            }
+                temp = "0"; }
             if (temp.equals("0001")) {
-                temp = "1";
-            }
+                temp = "1"; }
             if (temp.equals("0010")) {
-                temp = "2";
-            }
+                temp = "2"; }
             if (temp.equals("0011")) {
-                temp = "3";
-            }
+                temp = "3"; }
             if (temp.equals("0100")) {
-                temp = "4";
-            }
+                temp = "4"; }
             if (temp.equals("0101")) {
-                temp = "5";
-            }
+                temp = "5"; }
             if (temp.equals("0110")) {
-                temp = "6";
-            }
+                temp = "6"; }
             if (temp.equals("0111")) {
-                temp = "7";
-            }
+                temp = "7"; }
             if (temp.equals("1000")) {
-                temp = "8";
-            }
+                temp = "8"; }
             if (temp.equals("1001")) {
-                temp = "9";
-            }
+                temp = "9"; }
             if (temp.equals("1010")) {
-                temp = "A";
-            }
+                temp = "A"; }
             if (temp.equals("1011")) {
-                temp = "B";
-            }
+                temp = "B"; }
             if (temp.equals("1100")) {
-                temp = "C";
-            }
+                temp = "C"; }
             if (temp.equals("1101")) {
-                temp = "D";
-            }
+                temp = "D"; }
             if (temp.equals("1110")) {
-                temp = "E";
-            }
+                temp = "E"; }
             if (temp.equals("1111")) {
-                temp = "F";
-            }
+                temp = "F"; }
             retValue = retValue + temp;
             i = i + 4;
             j++;
@@ -204,11 +188,11 @@ public class Assembler {
         int val = Integer.parseInt(temp);
         temp = Integer.toBinaryString(val);
         if (val > 0) {
-            while (temp.length() < 8) {
+            while (temp.length() < 12) {
                 temp = "0" + temp;
             }
         } else {
-            temp = temp.substring(temp.length() - 8);
+            temp = temp.substring(temp.length() - 12);
         }
         return temp;
     }
@@ -229,6 +213,7 @@ public class Assembler {
         String opcode, r1, r2, r3, addr, imm, op1, op2, offset;
         String temp;
 
+        first=true;
         for (String instruction : instructions) {
             temp = instruction;
             index1 = temp.indexOf(' ');
@@ -318,14 +303,15 @@ public class Assembler {
             if (opcode.equals("0111")) {//JUMP
                 offset = temp.substring(index1 + 1);
                 offset = toOffset(offset);
-                temp = opcode + "0000" + offset;
+                temp = opcode  + offset;
 
             }
             if (opcode.equals("1000") || opcode.equals("1001") || opcode.equals("1010") || opcode.equals("1011") || opcode.equals("1100")) {
                 temp = conditionalJump(opcode, temp);
 
             }
-           // System.out.println(instruction+"    "+temp);
+            System.out.println(instruction+"    "+temp+"    "+binaryToHex(temp));
+
             wToOFile(binaryToHex(temp));
 
         }
@@ -335,14 +321,14 @@ public class Assembler {
 
         try {
             if (first) {
-                writer = new BufferedWriter(new FileWriter("outputLbL.hex", false));     //write instructions line by line
-                writer2 = new BufferedWriter(new FileWriter("outputOL.hex", false));     //write instructions consecutive
+                writer = new BufferedWriter(new FileWriter("logism.hex", false));     //write instructions line by line
+                writer2 = new BufferedWriter(new FileWriter("verilog.hex", false));     //write instructions consecutive
                 writer.write("v2.0 raw\n");
-                writer2.write("v2.0 raw\n");
+            //    writer2.write("v2.0 raw\n");
                 first = false;
             } else {
-                writer = new BufferedWriter(new FileWriter("outputLbL.hex", true));
-                writer2 = new BufferedWriter(new FileWriter("outputOL.hex", true));
+                writer = new BufferedWriter(new FileWriter("logism.hex", true));
+                writer2 = new BufferedWriter(new FileWriter("verilog.hex", true));
             }
             writer.write(bff + "\n");
             writer2.write(bff + " ");
