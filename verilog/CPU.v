@@ -19,7 +19,7 @@ initial begin
   CF <= 0;
   PC_flag <= 0;
 
-  $readmemh("v_output.hex", instruction_memory); //read from file
+  $readmemh("verilog.hex", instruction_memory); //read from file
 end
 
 always begin  //generate clock cycle
@@ -39,7 +39,11 @@ always @(*) begin
   end
 
   if(immediate) begin
-    alu_in = {4'h0, read_register2};
+    if(read_register2[3]) begin
+      alu_in = {12'hFFF, read_register2};
+    end else begin
+      alu_in = {12'h000, read_register2};
+    end
   end else begin
     alu_in = reg_out2;
   end
